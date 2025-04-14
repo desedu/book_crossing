@@ -15,7 +15,7 @@ CREATE TABLE readers (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(50) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
-	email VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
     registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -53,6 +53,21 @@ CREATE TABLE reviews (
     FOREIGN KEY (reader_id) REFERENCES readers(id)
 );
 
+-- История перемещений книг
+CREATE TABLE history (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT NOT NULL,
+    reader_id INT NOT NULL, -- читатель взявший книгу
+    from_location_id INT NOT NULL, -- откуда взята книга
+    to_location_id INT NULL, -- куда возвращена книга, а если NULL, то книга взята читателем
+    movement_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    action_type ENUM('получил', 'вернул') NOT NULL, 
+    FOREIGN KEY (book_id) REFERENCES books(id),
+    FOREIGN KEY (reader_id) REFERENCES readers(id),
+    FOREIGN KEY (from_location_id) REFERENCES locations(id),
+    FOREIGN KEY (to_location_id) REFERENCES locations(id)
+);
+
 INSERT INTO genres (name) VALUES 
 ('Русская классика'), ('Фантастика'), ('Детектив');
 
@@ -73,3 +88,9 @@ INSERT INTO reviews (book_id, reader_id, rating, comment) VALUES
 (1, 1, 5, 'Великолепная книга. Прочитал и всё!'),
 (1, 2, 4, 'Тяжело'),
 (2, 1, 3, 'Мне понравился только кошак черный');
+
+INSERT INTO history (book_id, reader_id, from_location_id, to_location_id, action_type, movement_date) VALUES 
+(1, 1, 1, NULL, 'получил', '2025-05-10 14:30:00'),
+(2, 2, 2, NULL, 'получил', '2024-12-13 11:20:00'),
+(1, 2, 1, 1, 'вернул', '2013-12-15 16:45:00'),
+(3, 2, 1, NULL, 'получил', '2015-06-10 13:15:00');
