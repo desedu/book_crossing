@@ -1,104 +1,75 @@
 CREATE DATABASE book_crossing;
 
-CREATE TABLE book_category (
-    id INT PRIMARY KEY,
+USE book_crossing;
+
+-- Локации для обмена книгами
+CREATE TABLE locations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
-    description TEXT
+    address VARCHAR(255) NOT NULL
 );
 
+-- Читатели системы
+CREATE TABLE readers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+	email VARCHAR(100) NOT NULL UNIQUE,
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Жанры книг
 CREATE TABLE genres (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE readers (
-    id INT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    full_name VARCHAR(100),
-    phone VARCHAR(20),
-    registration_date DATETIME,
-    rating DECIMAL(5,2)
-);
-
+-- Книги с информацией о доступности и прочим (book_take) еперь тут
 CREATE TABLE books (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
-    id_category INT,
-    isbn VARCHAR(20),
-    publication_year INT,
-    description TEXT,
-    FOREIGN KEY (id_category) REFERENCES book_category(id)
+    genre_id INT,
+    location_id INT,
+    condition_book ENUM('отличное', 'хорошее', 'удовлетворительное', 'плохое') DEFAULT 'хорошее',
+    available BOOLEAN DEFAULT TRUE,
+    current_reader_id INT NULL,
+    take_date DATETIME NULL,
+    FOREIGN KEY (genre_id) REFERENCES genres(id),
+    FOREIGN KEY (location_id) REFERENCES locations(id),
+    FOREIGN KEY (current_reader_id) REFERENCES readers(id)
 );
 
-CREATE TABLE book_deposit (
-    id INT PRIMARY KEY,
-    reader_id INT NOT NULL,
-    deposit_date DATETIME,
-    status VARCHAR(50),
-    FOREIGN KEY (reader_id) REFERENCES readers(id)
-);
-
-CREATE TABLE book_deposit_item (
-    id INT PRIMARY KEY,
-    deposit_id INT NOT NULL,
-    book_id INT NOT NULL,
-    deposit_condition VARCHAR(50),
-    notes TEXT,
-    FOREIGN KEY (deposit_id) REFERENCES book_deposit(id),
-    FOREIGN KEY (book_id) REFERENCES books(id)
-);
-
-CREATE TABLE book_take (
-    id INT PRIMARY KEY,
-    reader_id INT NOT NULL,
-    deposit_item_id INT NOT NULL,
-    take_date DATETIME,
-    return_date DATETIME,
-    status VARCHAR(50),
-    FOREIGN KEY (reader_id) REFERENCES readers(id),
-    FOREIGN KEY (deposit_item_id) REFERENCES book_deposit_item(id)
-);
-
-CREATE TABLE book_review (
-    id INT PRIMARY KEY,
+-- Отзывы о книгах
+CREATE TABLE reviews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
     book_id INT NOT NULL,
     reader_id INT NOT NULL,
-    rating INT NOT NULL,
-    review_text TEXT,
-    review_date DATETIME,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (book_id) REFERENCES books(id),
     FOREIGN KEY (reader_id) REFERENCES readers(id)
 );
 
-CREATE TABLE book_genre (
-    book_id INT NOT NULL,
-    genre_id INT NOT NULL,
-    PRIMARY KEY (book_id, genre_id),
-    FOREIGN KEY (book_id) REFERENCES books(id),
-    FOREIGN KEY (genre_id) REFERENCES genres(id)
-);
+INSERT INTO genres (name) VALUES 
+('Русская классика'), ('Фантастика'), ('Детектив');
 
-INSERT INTO book_category (id, name, description) VALUES
-(1, 'Роман', 'Художественная литература, которая описывает вымышленных персонажей и события'),
-(2, 'Фантастика', 'Литература, которая описывает фантастические события и миры'),
-(3, 'Детективы', 'Литаратура, описывающий процесс исследования загадочного происшествия');
+INSERT INTO locations (name, address) VALUES
+('Библиотека Сургу', 'ул. Энергетиков, 12'),
+('Библиотека Пургу', 'ул. Пушкина, 5');
 
-INSERT INTO genres (id, name) VALUES
-(1, 'Фантастика'),
-(2, 'Роман'),
-(3, 'Детектив');
+INSERT INTO readers (username, password, full_name, email) VALUES
+('ivanov_ii', 'stylesrg!2{', 'Иванов Иван Иванович', 'ivanov@mail.ru'),
+('ivanova_mi', 'qwerty', 'Иванова Мария Ивановна', 'ivanova@smail.ru');
 
-INSERT INTO books (id, title, author, id_category, isbn, publication_year, description) VALUES
-(1, 'Идиот', 'Фёдор Достоевский', 2, '978-5-17-080604-4', 1869, 'Роман писателя впервые опубликованный в номерах журнала «Русский вестник»'),
-(2, 'Евгений Онегин', 'Александр Пушкин', 2, '978-5-17-080601-3', 1833, 'Роман в стихах русского поэта Александра Сергеевича Пушкина'),
-(3, 'Мёртвые души', 'Николай Гоголь', 2, '978-5-17-080600-6', 1842, 'Произведение Николая Васильевича Гоголя, жанр которого сам автор обозначил как «поэма».'),
-(4, 'Доктор Живаго', 'Борис Пастернак', 2, '978-5-17-080599-3', 1957, 'Роман о любви на фоне революционных событий');
+INSERT INTO books (title, author, genre_id, location_id, condition_book) VALUES
+('Преступление и наказание', 'Ф. Достоевский', 1, 1, 'хорошее'),
+('Мастер и Маргарита', 'М. Булгаков', 1, 2, 'отличное'),
+('Евгений Онегин',  'Александр Пушкин', 2, 1, 'удовлетворительное');
 
-INSERT INTO book_genre (book_id, genre_id) VALUES
-(1, 1),
-(2, 1),
-(3, 3),
-(4, 1);
+INSERT INTO reviews (book_id, reader_id, rating, comment) VALUES
+(1, 1, 5, 'Великолепная книга. Прочитал и всё!'),
+(1, 2, 4, 'Тяжело'),
+(2, 1, 3, 'Мне понравился только кошак черный');
