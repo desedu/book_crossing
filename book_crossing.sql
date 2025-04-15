@@ -75,10 +75,10 @@ INSERT INTO readers (username, password, full_name, email) VALUES
 ('ivanov_ii', 'stylesrg!2{', 'Иванов Иван Иванович', 'ivanov@mail.ru'),
 ('ivanova_mi', 'qwerty', 'Иванова Мария Ивановна', 'ivanova@smail.ru');
 
-INSERT INTO books (title, author, genre_id, location_id, condition_book) VALUES
-('Преступление и наказание', 'Ф. Достоевский', 1, 1, 'хорошее'),
-('Мастер и Маргарита', 'М. Булгаков', 1, 2, 'отличное'),
-('Евгений Онегин',  'Александр Пушкин', 2, 1, 'удовлетворительное');
+INSERT INTO books (title, author, condition_book) VALUES
+('Преступление и наказание', 'Ф. Достоевский', 'хорошее'),
+('Мастер и Маргарита', 'М. Булгаков', 'отличное'),
+('Евгений Онегин',  'Александр Пушкин', 'удовлетворительное');
 
 INSERT INTO reviews (book_id, reader_id, rating, comment) VALUES
 (1, 1, 5, 'Великолепная книга. Прочитал и всё!'),
