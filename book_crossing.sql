@@ -31,7 +31,7 @@ CREATE TABLE books (
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
     genre_id INT,  -- жанры
-    condition_book ENUM('отличное', 'хорошее', 'удовлетворительное', 'плохое') DEFAULT 'хорошее', -- состояне книги
+    condition_book ENUM('отличное', 'хорошее', 'удовлетворительное', 'плохое') DEFAULT 'хорошее', 
     FOREIGN KEY (genre_id) REFERENCES genres(id) 
 );
 
@@ -51,16 +51,16 @@ CREATE TABLE reviews (
 CREATE TABLE history (
     id INT PRIMARY KEY AUTO_INCREMENT,
     book_id INT NOT NULL, 
-    reader_id INT NOT NULL, -- читатель взявший книгу
-    from_location_id INT NOT NULL, -- откуда взята книга
-    to_location_id INT NULL, -- куда возвращена книга, а если NULL, то книга взята читателем (она у читателя физически и не возвращена)
-    previous_movement_id INT NULL, -- ссылка на предыдущее перемещение
-    movement_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- текущая дата когда книга была возвращена
-    status ENUM('получил', 'вернул') NOT NULL, -- статус вернул или получил книгу
+    reader_id INT NOT NULL, 
+    from_location_id INT NOT NULL, 
+    to_location_id INT NULL, 
+    previous_movement_id INT NULL, 
+    movement_date DATETIME DEFAULT CURRENT_TIMESTAMP, 
+    action_type ENUM('получил', 'вернул') NOT NULL, 
     FOREIGN KEY (book_id) REFERENCES books(id), 
     FOREIGN KEY (reader_id) REFERENCES readers(id),
     FOREIGN KEY (from_location_id) REFERENCES locations(id),
-    FOREIGN KEY (to_location_id) REFERENCES locations(id)
+    FOREIGN KEY (to_location_id) REFERENCES locations(id),
     FOREIGN KEY (previous_movement_id) REFERENCES history(id)
 );
 
@@ -85,9 +85,8 @@ INSERT INTO reviews (book_id, reader_id, rating, comment) VALUES
 (1, 2, 4, 'Тяжело'),
 (2, 1, 3, 'Мне понравился только кошак черный');
 
-INSERT INTO history (book_id, reader_id, from_location_id, to_location_id, previous_movement_id, status, movement_date) VALUES 
+INSERT INTO history (book_id, reader_id, from_location_id, to_location_id, previous_movement_id, action_type, movement_date) VALUES 
 (1, 2, 1, NULL, (SELECT MAX(id) FROM history WHERE book_id = 3), 'получил', '2025-05-10 14:30:00'),
 (2, 1, 2, NULL, (SELECT MAX(id) FROM history WHERE book_id = 2), 'получил', '2024-12-13 11:20:00'),
 (1, 2, 1, 1, (SELECT MAX(id) FROM history  WHERE book_id = 3), 'вернул', '2013-12-15 16:45:00'),
 (3, 2, 1, NULL, (SELECT MAX(id) FROM history WHERE book_id = 1), 'получил', '2015-06-10 13:15:00');
-
