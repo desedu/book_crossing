@@ -86,7 +86,7 @@ INSERT INTO reviews (book_id, reader_id, rating, comment) VALUES
 (2, 1, 3, 'Мне понравился только кошак черный');
 
 INSERT INTO history (book_id, reader_id, from_location_id, to_location_id, previous_movement_id, action_type, movement_date) VALUES 
-(1, 2, 1, NULL, (SELECT MAX(id) FROM history WHERE book_id = 3), 'получил', '2025-05-10 14:30:00'),
-(2, 1, 2, NULL, (SELECT MAX(id) FROM history WHERE book_id = 2), 'получил', '2024-12-13 11:20:00'),
-(1, 2, 1, 1, (SELECT MAX(id) FROM history  WHERE book_id = 3), 'вернул', '2013-12-15 16:45:00'),
-(3, 2, 1, NULL, (SELECT MAX(id) FROM history WHERE book_id = 1), 'получил', '2015-06-10 13:15:00');
+(1, 2, 1, NULL, NULL, 'получил', '2025-05-10 14:30:00'),
+(2, 1, 2, NULL, NULL, 'получил', '2024-12-13 11:20:00'),
+(3, 2, 1, NULL, NULL, 'получил', '2015-06-10 13:15:00'),
+(1, 2, 1, 1, 1, 'вернул', '2013-12-15 16:45:00');
