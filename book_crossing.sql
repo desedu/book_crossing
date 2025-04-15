@@ -52,7 +52,7 @@ CREATE TABLE history (
     id INT PRIMARY KEY AUTO_INCREMENT,
     book_id INT NOT NULL, 
     reader_id INT NOT NULL, 
-    from_location_id INT NOT NULL, 
+    from_location_id INT NULL, 
     to_location_id INT NULL, 
     previous_movement_id INT NULL, 
     movement_date DATETIME DEFAULT CURRENT_TIMESTAMP, 
@@ -86,7 +86,7 @@ INSERT INTO reviews (book_id, reader_id, rating, comment) VALUES
 (2, 1, 3, 'Мне понравился только кошак черный');
 
 INSERT INTO history (book_id, reader_id, from_location_id, to_location_id, previous_movement_id, action_type, movement_date) VALUES 
-(1, 2, 1, NULL, NULL, 'получил', '2025-05-10 14:30:00'),
-(2, 1, 2, NULL, NULL, 'получил', '2024-12-13 11:20:00'),
-(3, 2, 1, NULL, NULL, 'получил', '2015-06-10 13:15:00'),
-(1, 2, 1, 1, 1, 'вернул', '2013-12-15 16:45:00');
+(1, 2, 1, NULL, NULL, 'получил', '2015-05-10 14:30:00'),
+(2, 1, 2, NULL, NULL, 'получил', '2014-12-13 11:20:00'),
+(1, 2, NULL, 2, 1, 'вернул', '2025-06-10 13:15:00'),
+(3, 2, 2, NULL, 3, 'получил', '2015-12-15 16:45:00');
